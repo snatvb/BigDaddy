@@ -7,4 +7,5 @@ import { TowerDiffence } from './TowerDiffence/app';
 
 (function () {
     var td = new TowerDiffence('game');
+    td.start();
 })();
