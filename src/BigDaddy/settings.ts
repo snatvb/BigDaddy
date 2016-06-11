@@ -4,7 +4,8 @@
 
 export const setSettings = (s:any = {}):Object => {
     var settings = {
-        fullSize: typeof s.fullSize === 'undefined'
+        width: s.width,
+        height: s.height
     };
     return settings;
 };
