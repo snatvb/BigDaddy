@@ -3,13 +3,13 @@
  */
 
 import {Core} from './core/index';
-import {GameSize} from './core/interfaces';
+import {GameSize, Position} from './core/interfaces';
 import {setSettings} from './settings';
 
 export class BigDaddy {
     public area;
     public screen:CanvasRenderingContext2D;
-    private gameSize:GameSize;
+    public gameSize:GameSize;
     public core:Core;
     private update:Function;
     private settings:any;
@@ -28,9 +28,10 @@ export class BigDaddy {
         this.area = document.getElementById(areaID);
         this.screen = this.area.getContext("2d");
         this.settings = setSettings(settings);
+        this.gameSize = this.setSize();
+
         this.core = new Core(this); // Подключаем ядро
         this.update = updateCallBack;
-        this.gameSize = this.setSize();
         this._bodies = [];
         this.BaseObject = this.core.getBaseObject();
     }
@@ -55,13 +56,13 @@ export class BigDaddy {
             width = window.innerWidth;
             height = window.innerHeight;
         }
-        this.area.innerHeight = parseInt(width, 10);
-        this.area.innerWidth = parseInt(height, 10);
-        return {x: this.area.width, y: this.area.height};
+        this.area.height = parseInt(height, 10);
+        this.area.width = parseInt(width, 10);
+        return <GameSize>{x: width, y: height};
     }
 
     /**
-     * Запуск движка
+     * Запуск движка(игры)
      * @returns {any}
      */
     public start():void {
@@ -127,11 +128,13 @@ export class BigDaddy {
      * @param size
      * @param texture
      */
-    public createObject(size, texture) {
+    public createObject(size, texture, position:Position = undefined):any {
         if(texture) {
             texture = this.core.getTexture(texture);
         }
-        this._bodies.push(new this.BaseObject(this, size, texture))
+        var subject = new this.BaseObject(this, size, texture, {position: position});
+        this._bodies.push(subject);
+        return subject;
     }
 
     /**
@@ -139,6 +142,7 @@ export class BigDaddy {
      * @param src
      */
     public setEarth(src:string) {
-
+        this.core.setEarth(src);
     }
+
 }

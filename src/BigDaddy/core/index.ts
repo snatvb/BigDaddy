@@ -3,13 +3,18 @@
  */
 
 import {GameSize} from './interfaces';
-import {BaseObject} from './object/base';
-import {TextureTool} from './texture';
+import {Texture} from './texture';
+import {ImageTool} from './image';
+
+import {BaseObject} from './base/Object';
+import {BaseTexture} from './base/Texture';
 
 export class Core {
     public engine;
-    private BaseObject;
-    private textureTool;
+    public BaseObject;
+    public Texture;
+    public ImageTool;
+    public earth;
 
     /**
      * Создаем ядро
@@ -19,7 +24,8 @@ export class Core {
     constructor(engine) {
         this.engine = engine;
         this.BaseObject = BaseObject;
-        this.textureTool = TextureTool;
+        this.Texture = Texture;
+        this.ImageTool = new ImageTool(this.engine.gameSize);
     }
 
     /**
@@ -27,7 +33,25 @@ export class Core {
      * @param earth
      */
     public setEarth(earth:string):void {
+        var engine = this.engine;
+        this.earth = this.getBaseTexture(earth,
+            (texture) => {
+                var img = this.ImageTool.setMaxSizeTexture(texture),
+                    offset = {x: 0, y: 0};
+                img.ZIndex = 0;
+                if (engine.gameSize.x < img.width) {
+                    offset.x = (engine.gameSize.x - img.width) / 2;
+                }
+                if (engine.gameSize.y < img.height) {
+                    offset.y = (engine.gameSize.y - img.height) / 2;
+                }
+                engine.screen.drawImage(img, offset.x, offset.y, img.width, img.height);
+            });
+    }
 
+
+    public getBaseTexture(src:string, callback:Function = undefined):any {
+        return new BaseTexture(src, callback);
     }
 
     /**
@@ -55,6 +79,6 @@ export class Core {
      * @returns {any}
      */
     getTexture(texture:string):any {
-        return new this.textureTool(texture);
+        return new this.Texture(texture);
     }
 }

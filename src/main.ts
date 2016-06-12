@@ -3,9 +3,9 @@
  */
 
 import { BigDaddy } from './BigDaddy/app';
-import { TowerDiffence } from './TowerDiffence/app';
+import { TowerDefence } from './TowerDiffence/app';
 
 (function () {
-    var td = new TowerDiffence('game');
+    var td = new TowerDefence('game');
     td.start();
 })();

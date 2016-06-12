@@ -3,9 +3,8 @@
  */
 
 export const setSettings = (s:any = {}):Object => {
-    var settings = {
+    return {
         width: s.width,
         height: s.height
     };
-    return settings;
 };

@@ -2,10 +2,9 @@
  * Created by snatvb on 11.06.16.
  */
 
+import {BaseTexture} from './base/Texture';
 
-export class TextureTool {
-    private _img;
-    public loaded:boolean = false;
+export class Texture extends BaseTexture {
 
     /**
      * Создание текстуры
@@ -13,19 +12,6 @@ export class TextureTool {
      * @param callback
      */
     constructor(src:string, callback:Function) {
-        this._img = new Image;
-        this._img.src = src;
-        this._img.onload = () => {
-            this.loaded = true;
-            if(typeof callback === 'function') callback(this);
-        }
-    }
-
-    /**
-     * Отдать image
-     * @returns {any}
-     */
-    public getImage():any{
-        return this._img;
+        super(src, callback);
     }
 }
