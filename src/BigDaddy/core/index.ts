@@ -32,21 +32,23 @@ export class Core {
      * Ставим землю
      * @param earth
      */
-    public setEarth(earth:string):void {
+    public setEarth(earth:string):any {
         var engine = this.engine;
+        var drawEarth = (texture) => {
+            var img = this.ImageTool.setMaxSizeTexture(texture),
+                offset = {x: 0, y: 0};
+            img.ZIndex = 0;
+            if (engine.gameSize.x < img.width) {
+                offset.x = (engine.gameSize.x - img.width) / 2;
+            }
+            if (engine.gameSize.y < img.height) {
+                offset.y = (engine.gameSize.y - img.height) / 2;
+            }
+            engine.screen.drawImage(img, offset.x, offset.y, img.width, img.height);
+        };
         this.earth = this.getBaseTexture(earth,
-            (texture) => {
-                var img = this.ImageTool.setMaxSizeTexture(texture),
-                    offset = {x: 0, y: 0};
-                img.ZIndex = 0;
-                if (engine.gameSize.x < img.width) {
-                    offset.x = (engine.gameSize.x - img.width) / 2;
-                }
-                if (engine.gameSize.y < img.height) {
-                    offset.y = (engine.gameSize.y - img.height) / 2;
-                }
-                engine.screen.drawImage(img, offset.x, offset.y, img.width, img.height);
-            });
+            drawEarth);
+        return drawEarth;
     }
 
 
@@ -78,7 +80,22 @@ export class Core {
      * @param texture
      * @returns {any}
      */
-    getTexture(texture:string):any {
+    public getTexture(texture:string):any {
         return new this.Texture(texture);
+    }
+
+    public isOnGrid(grid:any, x:number, y:number, width:any, height:any):boolean {
+        for (var i = 0; i < grid.length; i++) {
+            var gridItem = grid[i];
+            this.engine.screen.fillStyle="#376f0a";
+            //this.engine.screen.globalAlpha= 0.2;
+            this.engine.screen.fillRect(gridItem[0].x, gridItem[0].y, gridItem[1].x - gridItem[0].x, gridItem[1].y - gridItem[0].y);
+            if (x > gridItem[0].x && x < gridItem[1].x - width &&
+                y > gridItem[0].y && y < gridItem[1].y - height
+            ) {
+                return true;
+            }
+        }
+        return false;
     }
 }

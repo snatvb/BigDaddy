@@ -14,7 +14,7 @@ module.exports = {
     output: {
         path: "./dist",
         publicPath: '/dist/',
-        filename: "snMVVM.js"
+        filename: "BigDaddy.js"
     },
 
     devtool: 'source-map',

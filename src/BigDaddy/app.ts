@@ -5,6 +5,7 @@
 import {Core} from './core/index';
 import {GameSize, Position} from './core/interfaces';
 import {setSettings} from './settings';
+import {Earth} from './core/land';
 
 export class BigDaddy {
     public area;
@@ -17,6 +18,7 @@ export class BigDaddy {
     private tick;
     private _bodies:Array<any>;
     private BaseObject:any;
+    private earth:any;
 
     /**
      * Конструктор
@@ -98,6 +100,9 @@ export class BigDaddy {
      * @param gameSize
      */
     private _update(screen:CanvasRenderingContext2D, gameSize:GameSize):void {
+
+        this.screen.clearRect(0, 0, this.gameSize.x, this.gameSize.y);
+        this.earth.update();
         for (var i = 0, max = this._bodies.length; i < max; i++) {
             var body = this._bodies[i];
             body.update(screen, gameSize, this);
@@ -127,12 +132,14 @@ export class BigDaddy {
      * Создаем простой объект из BaseObject
      * @param size
      * @param texture
+     * @param position
      */
-    public createObject(size, texture, position:Position = undefined):any {
+    public createObject(size, texture, position:Position = undefined, settings:any = {}):any {
         if(texture) {
             texture = this.core.getTexture(texture);
         }
-        var subject = new this.BaseObject(this, size, texture, {position: position});
+        settings.position = position;
+        var subject = new this.BaseObject(this, size, texture, settings);
         this._bodies.push(subject);
         return subject;
     }
@@ -142,7 +149,7 @@ export class BigDaddy {
      * @param src
      */
     public setEarth(src:string) {
-        this.core.setEarth(src);
+        this.earth = new Earth(this, src);
     }
 
 }

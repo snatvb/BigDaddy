@@ -2,13 +2,20 @@
  * Created by snatvb on 09.06.16.
  */
 
+// [[{"x":215,"y":10},{"x":372,"y":197}],[{"x":75,"y":83},{"x":162,"y":384}],[{"x":165,"y":246},{"x":371,"y":385}],[{"x":8,"y":438},{"x":302,"y":509}],[{"x":10,"y":515},{"x":112,"y":604}],[{"x":164,"y":560},{"x":371,"y":607}]]
+
 import { BigDaddy } from '../BigDaddy/app';
 import { GameSize } from '../BigDaddy/core/interfaces';
+import { Grid } from './../BigDaddy/grid';
+import { GridTool } from './../BigDaddy/gridTool';
+import { Tower } from './objects';
 
 export class TowerDefence {
     private engine;
     private dragElement;
     private paused:boolean = false;
+    private gridTool;
+    private grid;
 
     /**
      * Создаем игру
@@ -17,8 +24,12 @@ export class TowerDefence {
      */
     constructor(areaID:string = 'game') {
         this.engine = new BigDaddy(areaID, <Function>this.update, {width: 375, height: 667}); // Подключаем движок
-        //this.engine.createObject({percent: 20}, 'img/tower.png');
         this.addListens();
+        // Подключаем тулзу для создания сетки
+        //this.gridTool = new GridTool((coords) => console.log(JSON.stringify(coords)));
+        this.grid = JSON.parse(`[[{"x":215,"y":10},{"x":372,"y":197}],[{"x":75,"y":83},
+        {"x":162,"y":384}],[{"x":165,"y":246},{"x":371,"y":385}],[{"x":8,"y":438},{"x":302,"y":509}],
+        [{"x":10,"y":515},{"x":112,"y":604}],[{"x":164,"y":560},{"x":371,"y":607}]]`);
     }
 
     /**
@@ -33,14 +44,14 @@ export class TowerDefence {
      * Запуск игры
      */
     public start():void {
-        this.engine.setEarth('img/land.jpg');
+        this.engine.setEarth('img/maps/level_1.png');
 
         this.engine.start();
 
         var self = this;
-        setTimeout(function () {
-            self.pause();
-        }, 2000);
+        //setTimeout(function () {
+        //    self.pause();
+        //}, 2000);
     }
 
     /**
@@ -84,12 +95,21 @@ export class TowerDefence {
 
         document.addEventListener('touchend', function(event:any) {
             if(!this.dragElement) return;
-            self.engine.createObject({percent: 20}, 'img/tower.png', {
-                x:parseInt(this.dragElement.style.left, 10),
-                y:parseInt(this.dragElement.style.top, 10)
-            });
+            self.newObject(this.dragElement.getAttribute('objectName'),
+                parseInt(this.dragElement.style.left, 10),
+                parseInt(this.dragElement.style.top, 10)
+            );
             this.dragElement.remove();
             this.dragElement = null;
         }, false);
+    }
+
+    private newObject(attribute:any, x:number, y:number) {
+        //console.log(this.grid);
+        var tower:any = new Tower(this.engine, x, y);
+        if(!this.engine.core.isOnGrid(this.grid, x, y, tower.width, tower.height)) {
+            return;
+        }
+        tower.spawn();
     }
 }

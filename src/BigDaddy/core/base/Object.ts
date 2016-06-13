@@ -14,20 +14,33 @@ export class BaseObject {
     private textureImage;
     private engine;
     private zIndex:number = 1;
-    private position:Position = {x: 0, y: 0};
+    private position:Position;
+    private drawing:boolean;
+    private alive:boolean;
+    private velocity:number;
+    private damage:number;
+    private health:number;
+    private name:any;
 
     /**
      * Передаем текстуру и размеры объекта
      * @param engine
      * @param texture
      * @param size
+     * @param settings
      */
     constructor(engine, size, texture:Texture, settings:any = {}) {
         this.engine = engine;
         this.texture = texture;
         this.textureImage = texture.getImage();
         this.size = this.setSize(size);
-        this.position = settings.position || {};
+        this.position = settings.position || {x: 0, y: 0};
+
+        this.alive = typeof settings.alive === 'undefined';
+        this.velocity = settings.velocity || 5;
+        this.damage = settings.attak || 5;
+        this.health = settings.health || 1;
+        this.name = settings.name || null;
     }
 
     public update(screen:CanvasRenderingContext2D, gameSize:GameSize, engine:Engine):void {
@@ -35,7 +48,7 @@ export class BaseObject {
     }
 
     private __update(screen:CanvasRenderingContext2D, gameSize:GameSize, engine:Engine):void {
-        this.draw(screen);
+        if (this.drawing) this.draw(screen);
     }
 
     /**
@@ -99,9 +112,30 @@ export class BaseObject {
         this.zIndex = <number>index;
     }
 
+    /**
+     * Установить позицию
+     * @param x
+     * @param y
+     * @returns {Position}
+     */
     public setPosition(x:number, y:number):Position {
         this.position.x = x;
         this.position.y = y;
         return this.position;
+    }
+
+    /**
+     * Спавним объект
+     */
+     public spawn():void {
+         this.drawing = true;
+     }
+
+    /**
+     * Получить размеры
+     * @returns {any}
+     */
+    public getSize():any {
+        return this.size;
     }
 }

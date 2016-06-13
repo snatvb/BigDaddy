@@ -30,4 +30,6 @@ export interface GameObject {
 //    }
 //}
 
-export interface Engine {}
+export interface Engine {
+    createObject:Function
+}
